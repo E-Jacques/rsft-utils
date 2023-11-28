@@ -1,7 +1,7 @@
 use filetime::{set_file_times, FileTime};
 use std::{
     fs::{self, File},
-    io,
+    io::{self, ErrorKind},
     path::PathBuf,
 };
 
@@ -16,13 +16,24 @@ pub fn file_or_dir_exists(path: PathBuf) -> bool {
     }
 }
 
-pub fn clean_dir(path: PathBuf) -> io::Result<()> {
+pub fn clean_or_create_dir(path: PathBuf) -> io::Result<()> {
+    let accepted_error_kinds = vec![
+        ErrorKind::PermissionDenied,
+        ErrorKind::NotFound,
+    ];
+
     match fs::remove_dir_all(path.clone()) {
         Ok(_) => (),
-        Err(io_error) => return Err(io_error),
+        Err(io_error) => {
+            if accepted_error_kinds.contains(&io_error.kind()) {
+                ()
+            } 
+
+            return Err(io_error)
+        },
     };
 
-    fs::create_dir(path.clone())
+    fs::create_dir_all(path.clone())
 }
 
 fn iso_date_to_filetime(iso_date: &str) -> Result<FileTime, chrono::ParseError> {
