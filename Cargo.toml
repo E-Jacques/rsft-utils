@@ -2,6 +2,8 @@
 name = "rsft-utils"
 version = "0.1.0"
 edition = "2021"
+description = "A rust cargo package that can be use to simplify your life when testing files in rust."
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
