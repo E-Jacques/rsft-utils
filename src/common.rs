@@ -25,11 +25,11 @@ pub fn clean_or_create_dir(path: PathBuf) -> io::Result<()> {
     match fs::remove_dir_all(path.clone()) {
         Ok(_) => (),
         Err(io_error) => {
-            if accepted_error_kinds.contains(&io_error.kind()) {
-                ()
+            if !accepted_error_kinds.contains(&io_error.kind()) {
+                return Err(io_error);
             } 
-
-            return Err(io_error)
+            
+            ()
         },
     };
 
